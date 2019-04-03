@@ -3,6 +3,7 @@ from PIL import Image
 from io import BytesIO
 import aiohttp
 import asyncio
+import math
 
 class aio_spider():
     def __init__(self, *args, **kwargs):
@@ -17,14 +18,14 @@ class aio_spider():
         self.total = (args[1] - args[0])*(args[3] - args[2])
         self.count = 0
 
-    async def run(url):
+    async def run(self, url):
         pass
 
 
 
 class switch_deg_num():
 
-    def deg2num(lat_deg, lon_deg, zoom):
+    def deg2num(self, lat_deg, lon_deg, zoom):
         lat_rad = math.radians(lat_deg)
         n = 2.0 ** zoom
         xtile = int((lon_deg + 180.0) / 360.0 * n)
@@ -32,7 +33,7 @@ class switch_deg_num():
                                     (1 / math.cos(lat_rad))) / math.pi) / 2.0 * n)
         return (xtile, ytile)
 
-    def num2deg(xtile, ytile, zoom):
+    def num2deg(self, xtile, ytile, zoom):
         n = 2.0 ** zoom
         lon_deg = xtile / n * 360.0 - 180.0
         lat_rad = math.atan(math.sinh(math.pi * (1 - 2 * ytile / n)))
