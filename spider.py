@@ -1,6 +1,7 @@
 import requests
 from PIL import Image
 from io import BytesIO
+from random import random
 import time
 import math
 
@@ -8,6 +9,7 @@ import math
 class spider_system():
 
     def run(x_small, x_large, y_small, y_large, zoom):
+        cookie = requests.get("htttp://google.cn/maps").cookies
         url = 'http://www.google.cn/maps/vt?lyrs=s@821&gl=cn&x={x}&y={y}&z={z}'
         header = {
             'user_agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
@@ -24,18 +26,23 @@ class spider_system():
         # for i in (args[0], args[1]):
             for j in (y_small, y_large):
             # for j in (args[2], args[3]):
-                try:
-                    count += 1
-                    r = requests.get(url.format(x=i, y=j, z=zoom),
-                                     headers=header)
+                
+
+                sleep_random = random() * 10
+                print("Sleep {:.2f} second(s).".format(sleep_random))
+                time.sleep(sleep_random)
+
+                count += 1
+                r = requests.get(url.format(x=i, y=j, z=zoom),
+                                headers=header, cookies=cookie)
+                print(r.status_code)
+                if 'html' not in str(r):
                     image_save(r, i, j, zoom)
-                    r.close()
-                except OSError:
-                    print("Location {}_{}_{} is not exist.".format(i, j, zoom))
-                    continue
-                else:
-                    success += 1
                     print("No.", count, "download successfully. Left", total - count)
+                    success += 1
+                else:
+                    print("Location {}_{}_{} is not exist.".format(i, j, zoom))
+                r.close()
 
         return success, total - success
 
@@ -70,14 +77,17 @@ def image_save(data, i, j, zoom):
 
 
 def main():
-    lat1 = float(input("输入纬度1："))
-    lat2 = float(input("输入纬度2："))
-    lon1 = float(input("输入经度1："))
-    lon2 = float(input("输入经度2："))
-    zoom = int(input("输入缩放倍率（0-23）："))
+    # lat1 = float(input("输入纬度1："))
+    # lat2 = float(input("输入纬度2："))
+    # lon1 = float(input("输入经度1："))
+    # lon2 = float(input("输入经度2："))
+    # zoom = int(input("输入缩放倍率（0-23）："))
 
-    # switch_big2small(lat1, lat2)
-    # switch_big2small(lon1, lon2)
+    lat1 = float(112.7)
+    lat2 = float(114.2)
+    lon1 = float(34.967)
+    lon2 = float(24.25)
+    zoom = int(10)
 
     x_small, y_small = switch_deg_num.deg2num(lat2, lon1, zoom)
     x_large, y_large = switch_deg_num.deg2num(lat1, lon2, zoom)
