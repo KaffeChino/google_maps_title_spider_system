@@ -1,20 +1,31 @@
 import requests
 from PIL import Image
 from io import BytesIO
-from random import random
+# from random import random
 import time
 import math
+import os
 
 
 class spider_system():
 
     def run(x_small, x_large, y_small, y_large, zoom):
-        cookie = requests.get("htttp://google.cn/maps").cookies
+
+        # 定义Cookies， header， 下载计数器count，总成功下载数success
+        # 计算总图块数量total
+        cookie = requests.get("http://google.cn/maps").cookies
         url = 'http://www.google.cn/maps/vt?lyrs=s@821&gl=cn&x={x}&y={y}&z={z}'
         header = {
-            'user_agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
+            'Host': "www.google.cn",
+            'Connection': "keep-alive",
+            'Origin': "http://www.google.cn",
+            'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
                            AppleWebKit/537.36 (KHTML, like Gecko) \
-                           Chrome/71.0.3578.98 Safari/537.36"}
+                           Chrome/71.0.3578.98 Safari/537.36",
+            'Accept': "image/webp,image/apng,image/*,*/*;q=0.8",
+            'Referer': "http://www.google.cn/",
+            'Accept-Encoding': "gzip, deflate",
+            'Accept-Language': "zh-CN,zh;q=0.9,zh-TW;q=0.8"}
         # self.arg = [x_small, x_large, y_small, y_large, zoom]
         # total = int((arg[1] - args[0] + 1) * (args[3] - args[2] + 1))
         total = int((x_large - x_small + 1) * (y_large - y_small + 1))
@@ -22,23 +33,26 @@ class spider_system():
         # zoom = int(args[4])
         success = 0
 
-        for i in (x_small, x_large):
-        # for i in (args[0], args[1]):
-            for j in (y_small, y_large):
-            # for j in (args[2], args[3]):
-                
+        # 更改当前文件夹
+        os.chdir('temp')
 
-                sleep_random = random() * 10
-                print("Sleep {:.2f} second(s).".format(sleep_random))
-                time.sleep(sleep_random)
+        for i in range(x_small, x_large + 1):
+            # for i in (args[0], args[1]):
+            for j in range(y_small, y_large + 1):
+                # for j in (args[2], args[3]):
+
+                # sleep_random = random() * 10
+                # print("Sleep {:.2f} second(s).".format(sleep_random))
+                # time.sleep(sleep_random)
 
                 count += 1
                 r = requests.get(url.format(x=i, y=j, z=zoom),
-                                headers=header, cookies=cookie)
+                                 headers=header, cookies=cookie)
                 print(r.status_code)
                 if 'html' not in str(r):
                     image_save(r, i, j, zoom)
-                    print("No.", count, "download successfully. Left", total - count)
+                    print("Location {}_{}_{} download successfully. Left {}"
+                          .format(i, j, zoom, total - count))
                     success += 1
                 else:
                     print("Location {}_{}_{} is not exist.".format(i, j, zoom))
@@ -48,7 +62,7 @@ class spider_system():
 
 
 class switch_deg_num():
-
+    @staticmethod
     def deg2num(lat_deg, lon_deg, zoom):
         lat_rad = math.radians(lat_deg)
         n = 2.0 ** zoom
@@ -67,7 +81,9 @@ class switch_deg_num():
 
 def switch_big2small(a, b):
     if a > b:
-        a, b = b, a
+        return b, a
+    else:
+        return a, b
 
 
 def image_save(data, i, j, zoom):
@@ -83,17 +99,17 @@ def main():
     # lon2 = float(input("输入经度2："))
     # zoom = int(input("输入缩放倍率（0-23）："))
 
-    lat1 = float(112.7)
-    lat2 = float(114.2)
-    lon1 = float(34.967)
-    lon2 = float(24.25)
+    lat1 = float(34.967)
+    lat2 = float(24.25)
+    lon1 = float(112.7)
+    lon2 = float(114.2)
     zoom = int(10)
+
+    lat1, lat2 = switch_big2small(lat1, lat2)
+    lon1, lon2 = switch_big2small(lon1, lon2)
 
     x_small, y_small = switch_deg_num.deg2num(lat2, lon1, zoom)
     x_large, y_large = switch_deg_num.deg2num(lat1, lon2, zoom)
-
-    switch_big2small(x_small, x_large)
-    switch_big2small(y_small, y_large)
 
     # arglist = [x_small, x_large, y_small, y_large, zoom]
 
