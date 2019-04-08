@@ -7,15 +7,82 @@ import math
 import os
 
 
+class title_system():
+    """
+    A list-based stack implementation.
+    """
+
+    def __init__(self, x_small, x_large, y_small, y_large, zoom):
+        """
+        _items is a list.
+        _size is length of the list.
+        You may ask, why not use list(_items)?
+        No. In fact, I'm using space exchaging time.
+        """
+        self._items = []
+        self._size = 0
+        for x in range(x_small, x_large + 1):
+            for y in range(y_small, y_large + 1):
+                self.push(x, y, zoom)
+
+    def isEmpty(self):
+        """
+        Check whether the stack is Empty.
+        YOU MUST CHECK IT BEFORE YOU USE POP METHOD.
+        DON'T FORGET! OR YOU MAY GET A KEYERROR!
+        """
+        # if len(self) == 0:
+        if self._size == 0:
+            return True
+        else:
+            return False
+
+    def __len__(self):
+        """
+        Return the length of the stack.
+        """
+        return self._size
+
+    def push(self, x, y, z):
+        """
+        Inserts items at top the stack
+        -- and in fact that is the end of the list.
+        """
+        self._items.append([x, y, z])
+        self._size += 1
+
+    def pop(self):
+        """
+        Removes and returns the item at top the stack.
+        New item append at the end of the list,
+        when use pop method, it will return the end as the same.
+        so I used list.pop().
+        It will return the last item of the list and delete it.
+        """
+        if self.isEmpty:
+            raise KeyError
+        x, y, z = self.pop()
+        self._size -= 1
+        return x, y, z
+
+    def peek(self):
+        """
+        peek method seems no use,
+        x, y will be transferd by spider_system when save images.
+        but I defined it. May be used one day ^_^
+        """
+        if self.isEmpty():
+            raise KeyError
+        x, y, z = self._items[len(self) - 1]
+        return x, y, z
+
+
 class spider_system():
-
-    def run(x_small, x_large, y_small, y_large, zoom):
-
-        # 定义Cookies， header， 下载计数器count，总成功下载数success
-        # 计算总图块数量total
-        cookie = requests.get("http://google.cn/maps").cookies
-        url = 'http://www.google.cn/maps/vt?lyrs=s@821&gl=cn&x={x}&y={y}&z={z}'
-        header = {
+    @staticmethod
+    def __init__(self):
+        self.cookie = requests.get("http://google.cn/maps").cookies
+        self.url = 'http://www.google.cn/maps/vt?lyrs=s@821&gl=cn&x={x}&y={y}&z={z}'
+        self.header = {
             'Host': "www.google.cn",
             'Connection': "keep-alive",
             'Origin': "http://www.google.cn",
@@ -26,39 +93,40 @@ class spider_system():
             'Referer': "http://www.google.cn/",
             'Accept-Encoding': "gzip, deflate",
             'Accept-Language': "zh-CN,zh;q=0.9,zh-TW;q=0.8"}
-        # self.arg = [x_small, x_large, y_small, y_large, zoom]
-        # total = int((arg[1] - args[0] + 1) * (args[3] - args[2] + 1))
-        total = int((x_large - x_small + 1) * (y_large - y_small + 1))
-        count = 0
-        # zoom = int(args[4])
-        success = 0
 
+    @classmethod
+    def run(self, title_stack, total):
         # 更改当前文件夹
         os.chdir('temp')
+        count = 0
+        success = 0
+        while title_stack.isEmpty() is False:
+            count += 1
+            x, y, z = title_stack.pop()
+            pic_url = self.url.fromat(x=x, y=y, z=z)
+            r = self.spider_core(pic_url)
+            if 'html' not in str(r):
+                self.image_save(r, x, y, z)
+                print("Location {}_{}_{} download successfully. Left {}."
+                      .format(x, y, z, total - count))
+                success += 1
+            else:
+                print("Location {}_{}_{} download failed or not exist."
+                      .format(x, y, z))
 
-        for i in range(x_small, x_large + 1):
-            # for i in (args[0], args[1]):
-            for j in range(y_small, y_large + 1):
-                # for j in (args[2], args[3]):
-
-                # sleep_random = random() * 10
-                # print("Sleep {:.2f} second(s).".format(sleep_random))
-                # time.sleep(sleep_random)
-
-                count += 1
-                r = requests.get(url.format(x=i, y=j, z=zoom),
-                                 headers=header, cookies=cookie)
-                print(r.status_code)
-                if 'html' not in str(r):
-                    image_save(r, i, j, zoom)
-                    print("Location {}_{}_{} download successfully. Left {}"
-                          .format(i, j, zoom, total - count))
-                    success += 1
-                else:
-                    print("Location {}_{}_{} is not exist.".format(i, j, zoom))
-                r.close()
+            r.close()
 
         return success, total - success
+
+    def spider_core(self, url):
+        r = requests.get(url, headers=self.header, cookies=self.cookie)
+        return r
+
+    @staticmethod
+    def image_save(data, x, y, zoom):
+        image = Image.open(BytesIO(data.content))
+        image.save('{}_{}_{}.jpg'.format(x, y, zoom), 'jpeg')
+        image.close()
 
 
 class switch_deg_num():
@@ -86,12 +154,6 @@ def switch_big2small(a, b):
         return a, b
 
 
-def image_save(data, i, j, zoom):
-    image = Image.open(BytesIO(data.content))
-    image.save('{}_{}_{}.jpg'.format(i, j, zoom), 'jpeg')
-    image.close()
-
-
 def main():
     # lat1 = float(input("输入纬度1："))
     # lat2 = float(input("输入纬度2："))
@@ -105,19 +167,19 @@ def main():
     lon2 = float(114.2)
     zoom = int(10)
 
+    start_time = time.perf_counter()
+
     lat1, lat2 = switch_big2small(lat1, lat2)
     lon1, lon2 = switch_big2small(lon1, lon2)
 
     x_small, y_small = switch_deg_num.deg2num(lat2, lon1, zoom)
     x_large, y_large = switch_deg_num.deg2num(lat1, lon2, zoom)
 
-    # arglist = [x_small, x_large, y_small, y_large, zoom]
+    total = int((x_large - x_small + 1) * (y_large - y_small + 1))
 
-    start_time = time.perf_counter()
-
-    # success, fail = spider_system.run(spider_system, arglist)
-    success, fail = spider_system.run(
-        x_small, x_large, y_small, y_large, zoom)
+    title_stack = title_system(x_small, x_large, y_small, y_large, zoom)
+    spider = spider_system(title_stack, total)
+    success, fail = spider.run(title_stack, total)
 
     end_time = time.perf_counter()
 
