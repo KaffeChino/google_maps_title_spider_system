@@ -103,7 +103,7 @@ def main():
     lat2 = float(24.25)
     lon1 = float(112.7)
     lon2 = float(114.2)
-    zoom = int(10)
+    zoom = int(5)
 
     lat1, lat2 = switch_big2small(lat1, lat2)
     lon1, lon2 = switch_big2small(lon1, lon2)

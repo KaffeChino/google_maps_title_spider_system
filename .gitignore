@@ -1,5 +1,5 @@
-__pycache__/deg2num.cpython-37.pyc
 *.jpg
 .vscode/*
 .vs/*
 .vscode/settings.json
+*.pyc
