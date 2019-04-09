@@ -7,10 +7,8 @@ import math
 import os
 
 
-class title_system():
-    """
-    A list-based stack implementation.
-    """
+class stack_system():
+    """A list-based stack implementation."""
 
     def __init__(self, x_small, x_large, y_small, y_large, zoom):
         """
@@ -21,6 +19,7 @@ class title_system():
         """
         self._items = []
         self._size = 0
+
         for x in range(x_small, x_large + 1):
             for y in range(y_small, y_large + 1):
                 self.push(x, y, zoom)
@@ -59,15 +58,15 @@ class title_system():
         so I used list.pop().
         It will return the last item of the list and delete it.
         """
-        if self.isEmpty:
+        if self.isEmpty():
             raise KeyError
-        x, y, z = self.pop()
+        x, y, z = self._items.pop()
         self._size -= 1
         return x, y, z
 
     def peek(self):
         """
-        peek method seems no use,
+        This method seems no use,
         x, y will be transferd by spider_system when save images.
         but I defined it. May be used one day ^_^
         """
@@ -78,9 +77,10 @@ class title_system():
 
 
 class spider_system():
-    @staticmethod
+    # @staticmethod
     def __init__(self):
         self.cookie = requests.get("http://google.cn/maps").cookies
+        # self.url = url
         self.url = 'http://www.google.cn/maps/vt?lyrs=s@821&gl=cn&x={x}&y={y}&z={z}'
         self.header = {
             'Host': "www.google.cn",
@@ -94,8 +94,8 @@ class spider_system():
             'Accept-Encoding': "gzip, deflate",
             'Accept-Language': "zh-CN,zh;q=0.9,zh-TW;q=0.8"}
 
-    @classmethod
-    def run(self, title_stack, total):
+    # @classmethod
+    def run(self, title_stack):
         # 更改当前文件夹
         os.chdir('temp')
         count = 0
@@ -103,12 +103,12 @@ class spider_system():
         while title_stack.isEmpty() is False:
             count += 1
             x, y, z = title_stack.pop()
-            pic_url = self.url.fromat(x=x, y=y, z=z)
+            pic_url = self.url.format(x=x, y=y, z=z)
             r = self.spider_core(pic_url)
-            if 'html' not in str(r):
+            if r.status_code == 200:
                 self.image_save(r, x, y, z)
                 print("Location {}_{}_{} download successfully. Left {}."
-                      .format(x, y, z, total - count))
+                      .format(x, y, z, len(title_stack)))
                 success += 1
             else:
                 print("Location {}_{}_{} download failed or not exist."
@@ -116,7 +116,7 @@ class spider_system():
 
             r.close()
 
-        return success, total - success
+        return success
 
     def spider_core(self, url):
         r = requests.get(url, headers=self.header, cookies=self.cookie)
@@ -165,7 +165,7 @@ def main():
     lat2 = float(24.25)
     lon1 = float(112.7)
     lon2 = float(114.2)
-    zoom = int(10)
+    zoom = int(5)
 
     start_time = time.perf_counter()
 
@@ -177,14 +177,15 @@ def main():
 
     total = int((x_large - x_small + 1) * (y_large - y_small + 1))
 
-    title_stack = title_system(x_small, x_large, y_small, y_large, zoom)
-    spider = spider_system(title_stack, total)
-    success, fail = spider.run(title_stack, total)
+    title_stack = stack_system(x_small, x_large, y_small, y_large, zoom)
+
+    spider = spider_system()
+    success = spider.run(title_stack)
 
     end_time = time.perf_counter()
 
     print("Total cost {:.2f} seconds.".format(end_time - start_time))
-    print("Download Over. {} item(s) secceed and {} failed.".format(success, fail))
+    print("Download Over. {} item(s) secceed and {} failed.".format(success, total - success))
 
 
 if __name__ == "__main__":
