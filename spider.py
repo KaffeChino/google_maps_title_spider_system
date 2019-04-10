@@ -11,8 +11,8 @@ class spider_system():
 
     def run(x_small, x_large, y_small, y_large, zoom):
 
-        # 定义Cookies， header， 下载计数器count，总成功下载数success
-        # 计算总图块数量total
+        # 定义Cookies， header， 下载计数器count，
+        # 总成功下载数success，计算总图块数量total
         cookie = requests.get("http://google.cn/maps").cookies
         url = 'http://www.google.cn/maps/vt?lyrs=s@821&gl=cn&x={x}&y={y}&z={z}'
         header = {
@@ -26,24 +26,15 @@ class spider_system():
             'Referer': "http://www.google.cn/",
             'Accept-Encoding': "gzip, deflate",
             'Accept-Language': "zh-CN,zh;q=0.9,zh-TW;q=0.8"}
-        # self.arg = [x_small, x_large, y_small, y_large, zoom]
-        # total = int((arg[1] - args[0] + 1) * (args[3] - args[2] + 1))
         total = int((x_large - x_small + 1) * (y_large - y_small + 1))
         count = 0
-        # zoom = int(args[4])
         success = 0
 
         # 更改当前文件夹
         os.chdir('temp')
 
         for i in range(x_small, x_large + 1):
-            # for i in (args[0], args[1]):
             for j in range(y_small, y_large + 1):
-                # for j in (args[2], args[3]):
-
-                # sleep_random = random() * 10
-                # print("Sleep {:.2f} second(s).".format(sleep_random))
-                # time.sleep(sleep_random)
 
                 count += 1
                 r = requests.get(url.format(x=i, y=j, z=zoom),
@@ -55,7 +46,8 @@ class spider_system():
                           .format(i, j, zoom, total - count))
                     success += 1
                 else:
-                    print("Location {}_{}_{} is not exist.".format(i, j, zoom))
+                    print("Location {}_{}_{} is not exist."
+                          .format(i, j, zoom))
                 r.close()
 
         return success, total - success
@@ -95,17 +87,17 @@ def image_save(data, i, j, zoom):
 def main():
 
     # 输入经纬度坐标
-    # lat1 = float(input("输入纬度1："))
-    # lat2 = float(input("输入纬度2："))
-    # lon1 = float(input("输入经度1："))
-    # lon2 = float(input("输入经度2："))
-    # zoom = int(input("输入缩放倍率（0-21）："))
+    lat1 = float(input("输入纬度1："))
+    lat2 = float(input("输入纬度2："))
+    lon1 = float(input("输入经度1："))
+    lon2 = float(input("输入经度2："))
+    zoom = int(input("输入缩放倍率（0-21）："))
 
-    lat1 = float(34.967)
-    lat2 = float(24.25)
-    lon1 = float(112.7)
-    lon2 = float(114.2)
-    zoom = int(5)
+    # lat1 = float(34.967)
+    # lat2 = float(24.25)
+    # lon1 = float(112.7)
+    # lon2 = float(114.2)
+    # zoom = int(6)
 
     lat_samll, lat_large = switch_big2small(lat1, lat2)
     lon_small, lon_large = switch_big2small(lon1, lon2)
@@ -131,8 +123,9 @@ def main():
     # 记录爬虫程序运行结束时间
     end_time = time.perf_counter()
 
-    print("Total cost {:.2f} seconds.".format(end_time - start_time))
-    print("Download Over. {} item(s) secceed and {} failed.".format(success, fail))
+    print("总共耗时{:.2f}秒.".format(end_time - start_time))
+    print("下载完成。 {} 个文件下载成功，{}个失败."
+          .format(success, fail))
 
 
 if __name__ == "__main__":
