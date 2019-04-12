@@ -79,7 +79,6 @@ class stack_system():
 class spider_system():
     # @staticmethod
     def __init__(self):
-        self.cookie = requests.get("http://google.cn/maps").cookies
         # self.url = url
         self.url = 'http://www.google.cn/maps/vt?lyrs=s@821&gl=cn&x={x}&y={y}&z={z}'
         self.header = {
@@ -93,25 +92,30 @@ class spider_system():
             'Referer': "http://www.google.cn/",
             'Accept-Encoding': "gzip, deflate",
             'Accept-Language': "zh-CN,zh;q=0.9,zh-TW;q=0.8"}
+        self.cookie = requests.get("http://google.cn/maps",
+                                   headers=self.header).cookies
 
     # @classmethod
     def run(self, title_stack):
         # 更改当前文件夹
         os.chdir('temp')
-        count = 0
+        # count = 0
         success = 0
         while title_stack.isEmpty() is False:
-            count += 1
+            # count += 1
             x, y, z = title_stack.pop()
             pic_url = self.url.format(x=x, y=y, z=z)
             r = self.spider_core(pic_url)
             if r.status_code == 200:
                 self.image_save(r, x, y, z)
-                print("Location {}_{}_{} download successfully. Left {}."
+                print("Success: {}_{}_{}. Left {}."
                       .format(x, y, z, len(title_stack)))
                 success += 1
+            elif r.status_code == 404:
+                print("Error: Not Exist: {}_{}_{}."
+                      .format(x, y, z))
             else:
-                print("Location {}_{}_{} download failed or not exist."
+                print("Error: Donload Failed: {}_{}_{}."
                       .format(x, y, z))
 
             r.close()
@@ -155,17 +159,18 @@ def switch_big2small(a, b):
 
 
 def main():
-    # lat1 = float(input("输入纬度1："))
-    # lat2 = float(input("输入纬度2："))
-    # lon1 = float(input("输入经度1："))
-    # lon2 = float(input("输入经度2："))
-    # zoom = int(input("输入缩放倍率（0-23）："))
 
     lat1 = float(34.967)
     lat2 = float(24.25)
     lon1 = float(112.7)
     lon2 = float(114.2)
     zoom = int(5)
+
+    lat1 = float(input("输入纬度1："))
+    lat2 = float(input("输入纬度2："))
+    lon1 = float(input("输入经度1："))
+    lon2 = float(input("输入经度2："))
+    zoom = int(input("输入缩放倍率（0-23）："))
 
     start_time = time.perf_counter()
 
@@ -185,7 +190,8 @@ def main():
     end_time = time.perf_counter()
 
     print("Total cost {:.2f} seconds.".format(end_time - start_time))
-    print("Download Over. {} item(s) secceed and {} failed.".format(success, total - success))
+    print("Download Over. {} item(s) secceed and {} failed."
+          .format(success, total - success))
 
 
 if __name__ == "__main__":
