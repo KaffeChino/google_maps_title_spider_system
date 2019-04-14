@@ -3,8 +3,10 @@ from PIL import Image
 from io import BytesIO
 # from random import random
 import time
-import math
+# import math
 import os
+import merge
+import deg2num
 
 
 class stack_system():
@@ -133,24 +135,6 @@ class spider_system():
         image.close()
 
 
-class switch_deg_num():
-    @staticmethod
-    def deg2num(lat_deg, lon_deg, zoom):
-        lat_rad = math.radians(lat_deg)
-        n = 2.0 ** zoom
-        xtile = int((lon_deg + 180.0) / 360.0 * n)
-        ytile = int((1.0 - math.log(
-            math.tan(lat_rad) + (1 / math.cos(lat_rad))) / math.pi) / 2.0 * n)
-        return (xtile, ytile)
-
-    def num2deg(xtile, ytile, zoom):
-        n = 2.0 ** zoom
-        lon_deg = xtile / n * 360.0 - 180.0
-        lat_rad = math.atan(math.sinh(math.pi * (1 - 2 * ytile / n)))
-        lat_deg = math.degrees(lat_rad)
-        return (lat_deg, lon_deg)
-
-
 def switch_big2small(a, b):
     if a > b:
         return b, a
@@ -164,21 +148,21 @@ def main():
     lat2 = float(24.25)
     lon1 = float(112.7)
     lon2 = float(114.2)
-    zoom = int(5)
+    zoom = int(10)
 
-    lat1 = float(input("输入纬度1："))
-    lat2 = float(input("输入纬度2："))
-    lon1 = float(input("输入经度1："))
-    lon2 = float(input("输入经度2："))
-    zoom = int(input("输入缩放倍率（0-23）："))
+    # lat1 = float(input("输入纬度1："))
+    # lat2 = float(input("输入纬度2："))
+    # lon1 = float(input("输入经度1："))
+    # lon2 = float(input("输入经度2："))
+    # zoom = int(input("输入缩放倍率（0-23）："))
 
     start_time = time.perf_counter()
 
     lat1, lat2 = switch_big2small(lat1, lat2)
     lon1, lon2 = switch_big2small(lon1, lon2)
 
-    x_small, y_small = switch_deg_num.deg2num(lat2, lon1, zoom)
-    x_large, y_large = switch_deg_num.deg2num(lat1, lon2, zoom)
+    x_small, y_small = deg2num.deg2num(lat2, lon1, zoom)
+    x_large, y_large = deg2num.deg2num(lat1, lon2, zoom)
 
     total = int((x_large - x_small + 1) * (y_large - y_small + 1))
 
@@ -192,6 +176,12 @@ def main():
     print("Total cost {:.2f} seconds.".format(end_time - start_time))
     print("Download Over. {} item(s) secceed and {} failed."
           .format(success, total - success))
+
+    anwer = input('Do you want to merge these pictures? Y/N')
+    if anwer == 'Y' or 'y':
+        merge.merge(x_small, x_large, y_small, y_large, zoom)
+    else:
+        exit()
 
 
 if __name__ == "__main__":
