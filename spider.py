@@ -80,7 +80,7 @@ def switch_big2small(a, b):
 
 def image_save(data, i, j, zoom):
     image = Image.open(BytesIO(data.content))
-    image.save('{}_{}_{}.jpg'.format(i, j, zoom), 'jpeg')
+    image.save('{}_{}_{}.jpg'.format(i, j, zoom), 'jpeg', quality=100)
     image.close()
 
 
