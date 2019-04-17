@@ -51,9 +51,12 @@ def merge(x_small, x_large, y_small, y_large, z):
     merge_pic = Image.new('RGB', (x_size * 256, y_size * 256))
     for x in range(x_size):
         for y in range(y_size):
-            pic = Image.open(image_name.format(x + x_small, y + y_small, z))
-            merge_pic.paste(pic, (x * 256, y * 256))
-    merge_pic.save('Merge_{}.jpg'.format(z))
+            try:
+                pic = Image.open(image_name.format(x + x_small, y + y_small, z))
+                merge_pic.paste(pic, (x * 256, y * 256))
+            except:
+                continue
+    merge_pic.save('Merge_{}.jpg'.format(z), format='JPEG', quality=100)
     print("Merge Success.")
     lat_top, lon_left = deg2num.num2deg(x_small, y_large, z)
     lat_bottom, lon_right = deg2num.num2deg(x_large + 1, y_small + 1, z)

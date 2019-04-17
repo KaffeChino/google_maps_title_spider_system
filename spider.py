@@ -3,7 +3,7 @@ from PIL import Image
 from io import BytesIO
 # from random import random
 import time
-# import math
+import math
 import os
 import merge
 import deg2num
@@ -11,6 +11,7 @@ import deg2num
 
 class stack_system():
     """A list-based stack implementation."""
+    """一个基于列表的栈的实现."""
 
     def __init__(self, x_small, x_large, y_small, y_large, zoom):
         """
@@ -18,6 +19,10 @@ class stack_system():
         _size is length of the list.
         You may ask, why not use list(_items)?
         No. In fact, I'm using space exchaging time.
+        _items是一个列表。
+        _size是这个列表的长度。
+        你可能会问，为什么不使用list(_items)?
+        不，事实上，我在使用空间换取时间。
         """
         self._items = []
         self._size = 0
@@ -29,8 +34,13 @@ class stack_system():
     def isEmpty(self):
         """
         Check whether the stack is Empty.
-        YOU MUST CHECK IT BEFORE YOU USE POP METHOD.
+        YOU MUST CHECK IT BEFORE YOU USE POP METHOD
+        or complete the imlementation in pop()
         DON'T FORGET! OR YOU MAY GET A KEYERROR!
+        检查栈是否为空。
+        你必须在使用pop()方法之间检查它。
+        或者在pop()里实现.
+        别忘记了！否则你会得到一个KEY ERROR错误！
         """
         # if len(self) == 0:
         if self._size == 0:
@@ -41,6 +51,7 @@ class stack_system():
     def __len__(self):
         """
         Return the length of the stack.
+        返回栈的长度。
         """
         return self._size
 
@@ -48,6 +59,8 @@ class stack_system():
         """
         Inserts items at top the stack
         -- and in fact that is the end of the list.
+        将数据压入栈的顶端
+        ——事实上也是列表的尾部。
         """
         self._items.append([x, y, z])
         self._size += 1
@@ -55,10 +68,17 @@ class stack_system():
     def pop(self):
         """
         Removes and returns the item at top the stack.
-        New item append at the end of the list,
+        When we push a New item into the stack,
+        The item append at the end of the list,
         when use pop method, it will return the end as the same.
         so I used list.pop().
         It will return the last item of the list and delete it.
+        移除栈的顶部的数据项并返回该项的值。
+        当我们向栈内压入一个新的数据线时，
+        新的数据项会被添加到列表的尾端，
+        当使用pop()方法时，也会返回列表尾端
+        所以我使用了列表的pop()方法。
+        它会返回列表的最后一项的数据项然后删除它。
         """
         if self.isEmpty():
             raise KeyError
@@ -68,9 +88,10 @@ class stack_system():
 
     def peek(self):
         """
-        This method seems no use,
-        x, y will be transferd by spider_system when save images.
-        but I defined it. May be used one day ^_^
+        An Interface left for continued development in the future.
+        peek() method will return the item at the top of the stack while not delete it.
+        一个为未来持续开发留下的接口。
+        peek()方法会返回栈的顶部的数据项而不会删除它。
         """
         if self.isEmpty():
             raise KeyError
@@ -131,8 +152,26 @@ class spider_system():
     @staticmethod
     def image_save(data, x, y, zoom):
         image = Image.open(BytesIO(data.content))
-        image.save('{}_{}_{}.jpg'.format(x, y, zoom), 'jpeg')
+        image.save('{}_{}_{}.jpg'.format(x, y, zoom), 'jpeg', quality=100)
         image.close()
+
+
+class switch_deg_num():
+    @staticmethod
+    def deg2num(lat_deg, lon_deg, zoom):
+        lat_rad = math.radians(lat_deg)
+        n = 2.0 ** zoom
+        xtile = int((lon_deg + 180.0) / 360.0 * n)
+        ytile = int((1.0 - math.log(math.tan(lat_rad) + (
+                     1 / math.cos(lat_rad))) / math.pi) / 2.0 * n)
+        return xtile, ytile
+
+    def num2deg(xtile, ytile, zoom):
+        n = 2.0 ** zoom
+        lon_deg = xtile / n * 360.0 - 180.0
+        lat_rad = math.atan(math.sinh(math.pi * (1 - 2 * ytile / n)))
+        lat_deg = math.degrees(lat_rad)
+        return lat_deg, lon_deg
 
 
 def switch_big2small(a, b):
