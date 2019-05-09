@@ -106,3 +106,4 @@ venv.bak/
 # ignore the pic saved by spider
 *.jpg
 .gitignore
+temp/

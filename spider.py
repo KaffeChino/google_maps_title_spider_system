@@ -183,17 +183,17 @@ def switch_big2small(a, b):
 
 def main():
 
-    lat1 = float(34.967)
-    lat2 = float(24.25)
-    lon1 = float(112.7)
-    lon2 = float(114.2)
-    zoom = int(10)
+    # lat1 = float(34.967)
+    # lat2 = float(34.10)
+    # lon1 = float(112.7)
+    # lon2 = float(114.2)
+    # zoom = int(7)
 
-    # lat1 = float(input("输入纬度1："))
-    # lat2 = float(input("输入纬度2："))
-    # lon1 = float(input("输入经度1："))
-    # lon2 = float(input("输入经度2："))
-    # zoom = int(input("输入缩放倍率（0-23）："))
+    lat1 = float(input("输入纬度1："))
+    lat2 = float(input("输入纬度2："))
+    lon1 = float(input("输入经度1："))
+    lon2 = float(input("输入经度2："))
+    zoom = int(input("输入缩放倍率（0-23）："))
 
     start_time = time.perf_counter()
 

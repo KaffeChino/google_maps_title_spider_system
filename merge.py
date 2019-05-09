@@ -58,12 +58,12 @@ def merge(x_small, x_large, y_small, y_large, z):
                 continue
     merge_pic.save('Merge_{}.jpg'.format(z), format='JPEG', quality=100)
     print("Merge Success.")
-    lat_top, lon_left = deg2num.num2deg(x_small, y_large, z)
-    lat_bottom, lon_right = deg2num.num2deg(x_large + 1, y_small + 1, z)
+    lat_top, lon_left = deg2num.num2deg(x_small, y_small, z)
+    lat_bottom, lon_right = deg2num.num2deg(x_large + 1, y_large + 1, z)
     print("左上坐标：{:.2f} N, {:.2f} E".format(lat_top, lon_left))
     print("右上坐标：{:.2f} N, {:.2f} E".format(lat_top, lon_right))
     print("左下坐标：{:.2f} N, {:.2f} E".format(lat_bottom, lon_left))
-    print("右下坐标：{:.2f} N, {:.2f} E".format(lat_bottom, lon_left))
+    print("右下坐标：{:.2f} N, {:.2f} E".format(lat_bottom, lon_right))
 
 
 def main():
