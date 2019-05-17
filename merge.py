@@ -65,13 +65,21 @@ def merge(x_small, x_large, y_small, y_large, z):
     print("左下坐标：{:.2f} N, {:.2f} E".format(lat_bottom, lon_left))
     print("右下坐标：{:.2f} N, {:.2f} E".format(lat_bottom, lon_right))
 
+    txt = "{}\t{}\t{:5f}\t{:5f}\n"
+    geores = open('GeoRegistration.txt', "w+")
+    geores.write(txt.format(0, 0, lon_left, lat_top))
+    geores.write(txt.format(x_size * 256, y_size * -256, lon_right, lat_bottom))
+    geores.write(txt.format(x_size * 256, 0, lon_right, lat_top))
+    geores.write(txt.format(0, y * -256, lon_right, lat_bottom))
+    geores.close()
+
 
 def main():
     os.chdir('temp')
     x_small, x_large, y_small, y_large, z = input_num()
 
     # title_stack = spider.stack_system(x_small, x_large, y_small, y_large, z)
-    merge(x_small, x_large, y_small, y_large, z)
+    # merge(x_small, x_large, y_small, y_large, z)
 
 
 if __name__ == "__main__":
