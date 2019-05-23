@@ -28,19 +28,17 @@ def scan():
 
 
 def input_num():
-    # x1 = int(input())
-    # x2 = int(input())
-    # y1 = int(input())
-    # y2 = int(input())
-    # z = int(input())
+    x1 = int(input())
+    x2 = int(input())
+    y1 = int(input())
+    y2 = int(input())
+    z = int(input())
 
-    x1 = 832
-    x2 = 836
-    y1 = 405
-    y2 = 408
-    z = 10
-    # x1, x2 = spider.switch_big2small(x1, x2)
-    # y1, y2 = spider.switch_big2small(y1, y2)
+    # x1 = 832
+    # x2 = 836
+    # y1 = 405
+    # y2 = 408
+    # z = 10
     return x1, x2, y1, y2, z
 
 
@@ -74,13 +72,13 @@ def merge(x_small, x_large, y_small, y_large, z):
     geores.close()
 
 
-def main():
-    os.chdir('temp')
-    x_small, x_large, y_small, y_large, z = input_num()
+# def main():
+#     os.chdir('temp')
+#     x_small, x_large, y_small, y_large, z = input_num()
 
     # title_stack = spider.stack_system(x_small, x_large, y_small, y_large, z)
     # merge(x_small, x_large, y_small, y_large, z)
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
