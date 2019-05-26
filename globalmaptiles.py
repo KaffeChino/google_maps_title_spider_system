@@ -82,15 +82,15 @@ class GlobalMercator(object):
 
     What coordinate conversions do we need for TMS Global Mercator tiles::
 
-         LatLon      <->       Meters      <->     Pixels    <->       Tile     
+         LatLon      <->       Meters      <->     Pixels    <->       Tile
 
      WGS84 coordinates   Spherical Mercator  Pixels in pyramid  Tiles in pyramid
-         lat/lon            XY in metres     XY pixels Z zoom      XYZ from TMS 
-        EPSG:4326           EPSG:900913                                         
-         .----.              ---------               --                TMS      
-        /      \     <->     |       |     <->     /----/    <->      Google    
-        \      /             |       |           /--------/          QuadTree   
-         -----               ---------         /------------/                   
+         lat/lon            XY in metres     XY pixels Z zoom      XYZ from TMS
+        EPSG:4326           EPSG:900913
+         .----.              ---------               --                TMS
+        /      \     <->     |       |     <->     /----/    <->      Google
+        \      /             |       |           /--------/          QuadTree
+         -----               ---------         /------------/
        KML, public         WebMapService         Web Clients      TileMapService
 
     What is the coordinate extent of Earth in EPSG:900913?
@@ -306,15 +306,15 @@ class GlobalGeodetic(object):
       TMS has coordinate origin (for pixels and tiles) in bottom-left corner.
       Rasters are in EPSG:4326 and therefore are compatible with Google Earth.
 
-         LatLon      <->      Pixels      <->     Tiles     
+         LatLon      <->      Pixels      <->     Tiles
 
      WGS84 coordinates   Pixels in pyramid  Tiles in pyramid
-         lat/lon         XY pixels Z zoom      XYZ from TMS 
-        EPSG:4326                                           
-         .----.                ----                         
-        /      \     <->    /--------/    <->      TMS      
-        \      /         /--------------/                   
-         -----        /--------------------/                
+         lat/lon         XY pixels Z zoom      XYZ from TMS
+        EPSG:4326
+         .----.                ----
+        /      \     <->    /--------/    <->      TMS
+        \      /         /--------------/
+         -----        /--------------------/
        WMS, KML    Web Clients, Google Earth  TileMapService
     """
 

@@ -102,11 +102,10 @@ def main():
     lat_samll, lat_large = switch_big2small(lat1, lat2)
     lon_small, lon_large = switch_big2small(lon1, lon2)
 
-    """
-    调用deg2num函数将经纬度转换成在zoom缩放倍率下瓦块坐标
-    x_small, y_small是该区域左上角瓦块的坐标，经度数小纬度高
-    x_large, y_large是该区域右下角瓦块的坐标，经度数大纬度低
-    """
+    # 调用deg2num函数将经纬度转换成在zoom缩放倍率下瓦块坐标
+    # x_small, y_small是该区域左上角瓦块的坐标，经度数小纬度高
+    # x_large, y_large是该区域右下角瓦块的坐标，经度数大纬度低
+
     x_small, y_small = switch_deg_num.deg2num(lat_large, lon_small, zoom)
     x_large, y_large = switch_deg_num.deg2num(lat_samll, lon_large, zoom)
 
