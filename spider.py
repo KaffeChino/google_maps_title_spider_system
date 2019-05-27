@@ -3,7 +3,7 @@ from PIL import Image
 from io import BytesIO
 # from random import random
 import time
-import math
+import deg2num
 import os
 
 
@@ -53,24 +53,6 @@ class spider_system():
         return success, total - success
 
 
-class switch_deg_num():
-    @staticmethod
-    def deg2num(lat_deg, lon_deg, zoom):
-        lat_rad = math.radians(lat_deg)
-        n = 2.0 ** zoom
-        xtile = int((lon_deg + 180.0) / 360.0 * n)
-        ytile = int((1.0 - math.log(
-            math.tan(lat_rad) + (1 / math.cos(lat_rad))) / math.pi) / 2.0 * n)
-        return (xtile, ytile)
-
-    def num2deg(xtile, ytile, zoom):
-        n = 2.0 ** zoom
-        lon_deg = xtile / n * 360.0 - 180.0
-        lat_rad = math.atan(math.sinh(math.pi * (1 - 2 * ytile / n)))
-        lat_deg = math.degrees(lat_rad)
-        return (lat_deg, lon_deg)
-
-
 def switch_big2small(a, b):
     if a > b:
         return b, a
@@ -106,8 +88,8 @@ def main():
     # x_small, y_small是该区域左上角瓦块的坐标，经度数小纬度高
     # x_large, y_large是该区域右下角瓦块的坐标，经度数大纬度低
 
-    x_small, y_small = switch_deg_num.deg2num(lat_large, lon_small, zoom)
-    x_large, y_large = switch_deg_num.deg2num(lat_samll, lon_large, zoom)
+    x_small, y_small = deg2num.deg2num(lat_large, lon_small, zoom)
+    x_large, y_large = deg2num.deg2num(lat_samll, lon_large, zoom)
 
     # arglist = [x_small, x_large, y_small, y_large, zoom]
 
