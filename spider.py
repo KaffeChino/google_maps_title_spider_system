@@ -80,21 +80,21 @@ def main():
     # lon1 = float(112.7)
     # lon2 = float(114.2)
     # zoom = int(6)
-
-    lat_samll, lat_large = switch_big2small(lat1, lat2)
-    lon_small, lon_large = switch_big2small(lon1, lon2)
-
-    # 调用deg2num函数将经纬度转换成在zoom缩放倍率下瓦块坐标
-    # x_small, y_small是该区域左上角瓦块的坐标，经度数小纬度高
-    # x_large, y_large是该区域右下角瓦块的坐标，经度数大纬度低
+    start_time = time.perf_counter()
 
     x_small, y_small = deg2num.deg2num(lat_large, lon_small, zoom)
     x_large, y_large = deg2num.deg2num(lat_samll, lon_large, zoom)
 
+    x1, y1 = switch_big2small(lat2, lon1, zoom)
+    x2, y2 = switch_big2small(lat1, lon2, zoom)
+
+    x_small, x_large = switch_big2small(x1, x2)
+    y_small, y_large = switch_big2small(y1, y2)
+
     # arglist = [x_small, x_large, y_small, y_large, zoom]
 
     # 记录爬虫程序开始时间
-    start_time = time.perf_counter()
+
 
     # success, fail = spider_system.run(spider_system, arglist)
     # 将5个数值传递给爬虫程序开始运行，返回的是成功数和失败数
